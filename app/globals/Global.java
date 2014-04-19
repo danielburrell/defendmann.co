@@ -14,6 +14,8 @@ import java.util.Comparator;
 
 import models.Player;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,6 +25,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import dao.TourDao;
 import play.Application;
 import play.GlobalSettings;
 import play.Logger;
@@ -48,15 +51,19 @@ public class Global extends GlobalSettings {
     Logger.info("Scheduling Cache Refresher");
     Akka.system().scheduler().schedule(Duration.create(0, TimeUnit.MILLISECONDS), Duration.create(10, TimeUnit.SECONDS),
 
+    		
     new Runnable() {
-      // private JdbcTemplate jdbcTemplate = new JdbcTemplate(DB.getDataSource());
-
+    	@Autowired @Qualifier("tourDao")
+    	private TourDao tourDao;
       public void run() {
 
-        Logger.info("Fetching known items");
-        List<Player> result = new ArrayList<Player>(5 * 201);
-        IntStream.range(0, 4).forEach((map) -> IntStream.range(0, 10000).forEach((steamId) -> addPlayerToList(steamId, map, result)));
-
+    	  if (tourDao == null) {
+        Logger.info("Tour dao is null");
+    	  } else {
+    		  Logger.info("Tourdao is not null");
+    	  }
+    	  
+        List<Player> result = tourDao.getToursForActivePlayersOnAllMaps();
         /*
          * jdbcTemplate.query( "select alt_class, favorite_class, ideal_team, map_id, reputation, steam_id, tour, xp from ranks, orderby map_id, tour", new
          * RowMapper<Player>() {
@@ -67,8 +74,7 @@ public class Global extends GlobalSettings {
          * item.setXp(rs.getInt("xp")); return item; } });
          */
 
-        result.stream().map(f -> f.getMapId()).distinct().forEach((mapId) -> IntStream.range(0, 200).forEach((tour) -> populateCache(result, mapId, tour)));
-
+        result.stream().map(f -> f.getMapId()).distinct().forEach((mapId) -> IntStream.range(0, 201).forEach((tour) -> populateCache(result, mapId, tour)));
         Logger.info("cache population complete");
 
       }
@@ -80,14 +86,15 @@ public class Global extends GlobalSettings {
                 .collect(Collectors.toList()));
       }
 
-      private Player addPlayerToList(int tour, int mapId, List<Player> result) {
-        Player p = new Player();
-        p.setTour(new Random().nextInt(200));
-        p.setSteamId(Integer.toString(tour));
-        p.setMapId(mapId);
-        result.add(p);
-        return p;
-      }
+	public TourDao getTourDao() {
+		return tourDao;
+	}
+
+	public void setTourDao(TourDao tourDao) {
+		this.tourDao = tourDao;
+	}
+
+      
     },
 
     Akka.system().dispatcher()
@@ -98,6 +105,7 @@ public class Global extends GlobalSettings {
 
   @Override
   public <A> A getControllerInstance(Class<A> type) throws Exception {
+	  Logger.info("get {}", type);
     return applicationContext.getBean(type);
   }
 
