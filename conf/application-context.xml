@@ -11,4 +11,5 @@
 
     <bean class="java.util.concurrent.ConcurrentHashMap"></bean>
     <bean id="tourDao" class="dao.TourDao"></bean>
+    <bean class="controllers.DataFetcher"></bean>
 </beans>

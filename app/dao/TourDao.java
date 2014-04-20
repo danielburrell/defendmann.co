@@ -10,10 +10,11 @@ import models.Player;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import play.Logger;
 
-@Component
+@Repository
 public class TourDao {
 
 	private JdbcTemplate jdbcTemplate;// = new JdbcTemplate(DB.getDataSource());

@@ -12,8 +12,7 @@ libraryDependencies ++= Seq(
   "org.springframework" % "spring-context" % "4.0.3.RELEASE",
   "org.springframework" % "spring-expression" % "4.0.3.RELEASE",
   "joda-time" % "joda-time" % "2.3",
-  "org.projectlombok" % "lombok" % "1.12.6"
+  "com.google.inject" % "guice" % "3.0"
 )
-
 
 play.Project.playJavaSettings
