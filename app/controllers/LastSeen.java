@@ -7,13 +7,15 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.inject.Inject;
+
 import play.mvc.Controller;
 import play.mvc.Result;
 
 @Component
 public class LastSeen extends Controller {
 
-  @Autowired
+  @Inject
   private ConcurrentHashMap<String, DateTime> lastSeenThrottle;
 
   /**
@@ -37,4 +39,13 @@ public class LastSeen extends Controller {
 
     return ok("Updating last seen");
   }
+
+public ConcurrentHashMap<String, DateTime> getLastSeenThrottle() {
+	return lastSeenThrottle;
+}
+
+public void setLastSeenThrottle(
+		ConcurrentHashMap<String, DateTime> lastSeenThrottle) {
+	this.lastSeenThrottle = lastSeenThrottle;
+}
 }

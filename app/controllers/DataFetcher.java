@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import com.google.inject.Inject;
+
 import play.Logger;
 import play.cache.Cache;
 import dao.TourDao;
@@ -18,18 +20,11 @@ import dao.TourDao;
 @Component
 public class DataFetcher implements Runnable {
 
-	@Autowired
-	@Qualifier("tourDao")
+	@Inject
 	private TourDao tourDao;
 
 	public void run() {
-
-		if (tourDao == null) {
-			Logger.info("Tour dao is null");
-		} else {
-			Logger.info("Tourdao is not null");
-		}
-
+		long startTime = System.currentTimeMillis();
 		List<Player> result = tourDao.getToursForActivePlayersOnAllMaps();
 		/*
 		 * jdbcTemplate.query(
@@ -54,7 +49,7 @@ public class DataFetcher implements Runnable {
 				.forEach(
 						(mapId) -> IntStream.range(0, 201).forEach(
 								(tour) -> populateCache(result, mapId, tour)));
-		Logger.info("cache population complete");
+		Logger.info("Cache refreshed in {}ms", System.currentTimeMillis()-startTime);
 
 	}
 

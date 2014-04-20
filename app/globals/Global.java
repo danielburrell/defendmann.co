@@ -53,9 +53,8 @@ public class Global extends GlobalSettings {
 
 	@Override
 	public void onStart(Application arg0) {
-
-		Logger.info("runnable:{}", runnable);
 		Logger.info("Scheduling Cache Refresher");
+		INJECTOR.injectMembers(this);
 		Akka.system()
 				.scheduler()
 				.schedule(Duration.create(0, TimeUnit.MILLISECONDS),

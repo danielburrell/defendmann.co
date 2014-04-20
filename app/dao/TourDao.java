@@ -14,13 +14,13 @@ import org.springframework.stereotype.Repository;
 
 import play.Logger;
 
-@Repository
+@Component
 public class TourDao {
 
 	private JdbcTemplate jdbcTemplate;// = new JdbcTemplate(DB.getDataSource());
 
 	public List<Player> getToursForActivePlayersOnAllMaps() {
-		Logger.info("Getting tours for active players.");
+		Logger.debug("Getting tours for active players.");
 		List<Player> result = new ArrayList<Player>(5 * 200);
 		IntStream.range(0, 4).forEach(
 				(map) -> IntStream.range(0, 10000).forEach(
